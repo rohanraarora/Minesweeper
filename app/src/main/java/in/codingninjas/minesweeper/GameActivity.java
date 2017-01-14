@@ -67,6 +67,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 //TODO reset
+                reset();
             }
         });
         setUpBoard();
@@ -147,15 +148,75 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        Square square = (Square)view;
-        Toast.makeText(this,"Click\nRow: " + square.getRow() + "\nCol: " + square.getColumn(),Toast.LENGTH_SHORT).show();
+        Square square = (Square) view;
+        if(!square.isRevealed() && !square.isFlagged()) {
+            square.reveal();
+            if (square.isMine()) {
+                Toast.makeText(this, "You Loose", Toast.LENGTH_LONG).show();
+                revealAll();
+            } else {
+                score++;
+                if (square.isEmpty()) {
+                    revealNeighbours(square);
+                }
+            }
+            updateScore();
+            checkIfGameComplete();
+        }
+    }
+
+    private void checkIfGameComplete() {
+        if(NO_0F_MINES == NO_OF_COLS*NO_OF_ROWS - score){
+            Toast.makeText(this,"You win",Toast.LENGTH_LONG).show();
+            revealAll();
+        }
+    }
+
+    private void updateScore() {
+        scoreTextView.setText("Score: " + score);
+    }
+
+    private void revealNeighbours(Square square){
+        int row = square.getRow();
+        int col = square.getColumn();
+        for(int i = 0;i<NEIGHBOUR_COORDS.length;i++){
+            int[] neighbourCoords = NEIGHBOUR_COORDS[i];
+            int neighbourRow = row + neighbourCoords[0];
+            int neighbourCol = col + neighbourCoords[1];
+            if(isInBounds(neighbourRow,neighbourCol)){
+                Square neighbourSquare = squares[neighbourRow][neighbourCol];
+                if(!neighbourSquare.isRevealed()) {
+                    neighbourSquare.reveal();
+                    score++;
+                    if (neighbourSquare.isEmpty()) {
+                        revealNeighbours(neighbourSquare);
+                    }
+                }
+                board[neighbourRow][neighbourCol]++;
+            }
+        }
+    }
+
+    private void revealAll(){
+        for(int i = 0;i<NO_OF_ROWS;i++){
+            for(int j = 0;j<NO_OF_COLS;j++){
+                Square square = squares[i][j];
+                if(!square.isRevealed()) {
+                    square.reveal();
+                }
+            }
+        }
     }
 
     @Override
     public boolean onLongClick(View view) {
         Square square = (Square)view;
-        Toast.makeText(this,"Long Press\nRow: " + square.getRow() + "\nCol: " + square.getColumn(),Toast.LENGTH_SHORT).show();
-
+        square.setFlag(!square.isFlagged());
         return true;
+    }
+
+    public void reset(){
+        initGame();
+        updateScore();
     }
 }
