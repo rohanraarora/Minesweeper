@@ -82,5 +82,31 @@ public class Square extends Button {
         setMeasuredDimension(size, size);
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if(revealed){
+            setBackground(ContextCompat.getDrawable(getContext(), R.drawable.revealed_background));
+            if(value == MINE){
+                setText("*");
+            }
+            else if(value == 0){
+                setText(" ");
+            }
+            else {
+                setText(String.valueOf(value));
+            }
+        }
+        else {
+            setBackground(ContextCompat.getDrawable(getContext(), R.drawable.normal_square_background));
+            if(flagged){
+                setText("!");
+            }
+            else {
+                setText(" ");
+            }
+        }
+    }
+
 
 }
