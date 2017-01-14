@@ -159,23 +159,30 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Square square = (Square) view;
+        //Response is sqaure is not revealed and not flagged
         if(!square.isRevealed() && !square.isFlagged()) {
+            //Reveal
             square.reveal();
             if (square.isMine()) {
+                //If the revealed tile is mine, then show message and reveal all the tiles
                 Toast.makeText(this, "You Loose", Toast.LENGTH_LONG).show();
                 revealAll();
             } else {
+                //Otherwise increase score
                 score++;
                 if (square.isEmpty()) {
+                    //If the revealed tile is empty recursively reveal neighbour tiles until non empty tiles are revealed
                     revealNeighbours(square);
                 }
             }
+            //update score and check if game is complete
             updateScore();
             checkIfGameComplete();
         }
     }
 
     private void checkIfGameComplete() {
+        //if the no of unrevealed tiles is equal to no of mines, then the user wins
         if(NO_0F_MINES == NO_OF_COLS*NO_OF_ROWS - score){
             Toast.makeText(this,"You win",Toast.LENGTH_LONG).show();
             revealAll();
@@ -220,12 +227,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onLongClick(View view) {
+        //Toggle flag
         Square square = (Square)view;
         square.setFlag(!square.isFlagged());
         return true;
     }
 
     public void reset(){
+        //restart game and update score
         initGame();
         updateScore();
     }
