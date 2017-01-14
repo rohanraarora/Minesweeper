@@ -15,6 +15,7 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        // Get the intent which started this
         Intent intent = getIntent();
         int difficulty = intent.getIntExtra("difficulty",MainActivity.MEDIUM);
         Toast.makeText(this,difficulty+"",Toast.LENGTH_LONG).show();
