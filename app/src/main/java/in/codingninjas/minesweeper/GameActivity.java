@@ -98,6 +98,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initGame(){
+        //Set value of each sqaure = 0
         score = 0;
         for(int i = 0;i<NO_OF_ROWS;i++){
             for(int j = 0;j<NO_OF_COLS;j++ ){
@@ -109,6 +110,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setRandomMines(){
+        //Set a specific no of mines
         int minesCount = 0;
         Random random = new Random();
         while (minesCount < NO_0F_MINES){
@@ -117,8 +119,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             int col = randomInt%NO_OF_COLS;
             if(board[row][col] != -1){
                 board[row][col] = -1;
+                //When setting a new mine increase the value of neighbour tiles by 1.
 
-                //Increasing value of neighbours of mine by 1 if not a mine
                 increaseNeighbourValues(row,col);
 
                 minesCount++;
@@ -131,6 +133,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             int[] neighbourCoords = NEIGHBOUR_COORDS[i];
             int neighbourRow = row + neighbourCoords[0];
             int neighbourCol = col + neighbourCoords[1];
+            //Increase the value if neighbour sqaure is inside board and is not a mine
             if(isInBounds(neighbourRow,neighbourCol) && board[neighbourRow][neighbourCol] != -1){
                 board[neighbourRow][neighbourCol]++;
             }
@@ -138,10 +141,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isInBounds(int row,int col){
+        //Check if it's inside the board
         return  row >=0 && row < NO_OF_ROWS && col >=0 && col < NO_OF_COLS;
     }
 
     private void refreshBoard() {
+        //set value for each square
         for(int i = 0;i<NO_OF_ROWS;i++){
             for(int j = 0;j<NO_OF_COLS;j++){
                 Square square = squares[i][j];
