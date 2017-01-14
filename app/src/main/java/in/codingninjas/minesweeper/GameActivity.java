@@ -33,6 +33,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        // Get the intent which started this
         Intent intent = getIntent();
         int difficulty = intent.getIntExtra("difficulty",MainActivity.MEDIUM);
         switch (difficulty){
