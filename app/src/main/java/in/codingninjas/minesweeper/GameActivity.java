@@ -40,6 +40,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        // Get the intent which started this
         Intent intent = getIntent();
         int difficulty = intent.getIntExtra("difficulty",MainActivity.MEDIUM);
         switch (difficulty){
@@ -76,16 +77,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setUpBoard() {
+        //Get the width of screen and divide the no of cols to get the width of square
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int width  = displayMetrics.widthPixels;
         size = width/NO_OF_COLS;
         squares = new Square[NO_OF_ROWS][NO_OF_COLS];
         board = new int[NO_OF_ROWS][NO_OF_COLS];
         for(int i = 0;i<NO_OF_ROWS;i++){
+            //Create a new table row
             TableRow row = new TableRow(GameActivity.this);
             for(int j = 0;j<NO_OF_COLS;j++){
+                //Add squares in table row
                 Square square = new Square(GameActivity.this,size);
                 squares[i][j] = square;
+                //Add Listeners
                 square.setOnClickListener(GameActivity.this);
                 square.setOnLongClickListener(GameActivity.this);
                 row.addView(square);
@@ -95,6 +100,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initGame(){
+        //Set value of each sqaure = 0
         score = 0;
         for(int i = 0;i<NO_OF_ROWS;i++){
             for(int j = 0;j<NO_OF_COLS;j++ ){
@@ -106,6 +112,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setRandomMines(){
+        //Set a specific no of mines
         int minesCount = 0;
         Random random = new Random();
         while (minesCount < NO_0F_MINES){
@@ -114,8 +121,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             int col = randomInt%NO_OF_COLS;
             if(board[row][col] != -1){
                 board[row][col] = -1;
+                //When setting a new mine increase the value of neighbour tiles by 1.
 
-                //Increasing value of neighbours of mine by 1 if not a mine
                 increaseNeighbourValues(row,col);
 
                 minesCount++;
@@ -128,6 +135,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             int[] neighbourCoords = NEIGHBOUR_COORDS[i];
             int neighbourRow = row + neighbourCoords[0];
             int neighbourCol = col + neighbourCoords[1];
+            //Increase the value if neighbour sqaure is inside board and is not a mine
             if(isInBounds(neighbourRow,neighbourCol) && board[neighbourRow][neighbourCol] != -1){
                 board[neighbourRow][neighbourCol]++;
             }
@@ -135,10 +143,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isInBounds(int row,int col){
+        //Check if it's inside the board
         return  row >=0 && row < NO_OF_ROWS && col >=0 && col < NO_OF_COLS;
     }
 
     private void refreshBoard() {
+        //set value for each square
         for(int i = 0;i<NO_OF_ROWS;i++){
             for(int j = 0;j<NO_OF_COLS;j++){
                 Square square = squares[i][j];
@@ -150,24 +160,31 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Square square = (Square) view;
+        //Response is sqaure is not revealed and not flagged
         if(!square.isRevealed() && !square.isFlagged()) {
+            //Reveal
             square.reveal();
             if (square.isMine()) {
+                //If the revealed tile is mine, then show message and reveal all the tiles
                 Toast.makeText(this, "You Loose", Toast.LENGTH_LONG).show();
                 revealAll();
                 saveScore();
             } else {
+                //Otherwise increase score
                 score++;
                 if (square.isEmpty()) {
+                    //If the revealed tile is empty recursively reveal neighbour tiles until non empty tiles are revealed
                     revealNeighbours(square);
                 }
             }
+            //update score and check if game is complete
             updateScore();
             checkIfGameComplete();
         }
     }
 
     private void checkIfGameComplete() {
+        //if the no of unrevealed tiles is equal to no of mines, then the user wins
         if(NO_0F_MINES == NO_OF_COLS*NO_OF_ROWS - score){
             Toast.makeText(this,"You win",Toast.LENGTH_LONG).show();
             revealAll();
@@ -213,12 +230,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onLongClick(View view) {
+        //Toggle flag
         Square square = (Square)view;
         square.setFlag(!square.isFlagged());
         return true;
     }
 
     public void reset(){
+        //restart game and update score
         initGame();
         updateScore();
     }
