@@ -67,16 +67,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setUpBoard() {
+        //Get the width of screen and divide the no of cols to get the width of square
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int width  = displayMetrics.widthPixels;
         size = width/NO_OF_COLS;
         squares = new Square[NO_OF_ROWS][NO_OF_COLS];
         board = new int[NO_OF_ROWS][NO_OF_COLS];
         for(int i = 0;i<NO_OF_ROWS;i++){
+            //Create a new table row
             TableRow row = new TableRow(GameActivity.this);
             for(int j = 0;j<NO_OF_COLS;j++){
+                //Add squares in table row
                 Square square = new Square(GameActivity.this,size);
                 squares[i][j] = square;
+                //Add Listeners
                 square.setOnClickListener(GameActivity.this);
                 square.setOnLongClickListener(GameActivity.this);
                 row.addView(square);
