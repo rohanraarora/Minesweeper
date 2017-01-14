@@ -1,5 +1,6 @@
 package in.codingninjas.minesweeper;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -24,22 +25,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startGame(View view){
+        Intent intent = new Intent(this,GameActivity.class);
         int id = radioGroup.getCheckedRadioButtonId();
         int difficulty = MEDIUM;
         switch (id){
             case R.id.easyRadio:
                 difficulty = EASY;
-                Toast.makeText(this,"Easy",Toast.LENGTH_LONG).show();
                 break;
             case R.id.hardRadio:
                 difficulty = HARD;
-                Toast.makeText(this,"Easy",Toast.LENGTH_LONG).show();
                 break;
             case R.id.mediumRadio:
                 difficulty = MEDIUM;
-                Toast.makeText(this,"Easy",Toast.LENGTH_LONG).show();
                 break;
         }
+        intent.putExtra("difficulty",difficulty);
+        startActivity(intent);
 
     }
 
