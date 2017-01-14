@@ -11,6 +11,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 public class GameActivity extends AppCompatActivity implements View.OnClickListener,View.OnLongClickListener{
 
     TableLayout tableLayout;
@@ -23,6 +25,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Square[][] squares;
 
     private TextView scoreTextView;
+
+    private static final int[][] NEIGHBOUR_COORDS = {
+            {1,0},{1,1},{1,-1},{0,1},{0,-1},{-1,0},{-1,1},{-1,-1}
+    };
 
     private int size;
     private int[][] board;
@@ -64,6 +70,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         setUpBoard();
+        initGame();
     }
 
     private void setUpBoard() {
@@ -85,14 +92,70 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void initGame(){
+        score = 0;
+        for(int i = 0;i<NO_OF_ROWS;i++){
+            for(int j = 0;j<NO_OF_COLS;j++ ){
+                board[i][j] = 0;
+            }
+        }
+        setRandomMines();
+        refreshBoard();
+    }
+
+    private void setRandomMines(){
+        int minesCount = 0;
+        Random random = new Random();
+        while (minesCount < NO_0F_MINES){
+            int randomInt = random.nextInt(NO_OF_ROWS*NO_OF_COLS);
+            int row = randomInt/NO_OF_COLS;
+            int col = randomInt%NO_OF_COLS;
+            if(board[row][col] != -1){
+                board[row][col] = -1;
+
+                //Increasing value of neighbours of mine by 1 if not a mine
+                increaseNeighbourValues(row,col);
+
+                minesCount++;
+            }
+        }
+    }
+
+    private void increaseNeighbourValues(int row,int col){
+        for(int i = 0;i<NEIGHBOUR_COORDS.length;i++){
+            int[] neighbourCoords = NEIGHBOUR_COORDS[i];
+            int neighbourRow = row + neighbourCoords[0];
+            int neighbourCol = col + neighbourCoords[1];
+            if(isInBounds(neighbourRow,neighbourCol) && board[neighbourRow][neighbourCol] != -1){
+                board[neighbourRow][neighbourCol]++;
+            }
+        }
+    }
+
+    private boolean isInBounds(int row,int col){
+        return  row >=0 && row < NO_OF_ROWS && col >=0 && col < NO_OF_COLS;
+    }
+
+    private void refreshBoard() {
+        for(int i = 0;i<NO_OF_ROWS;i++){
+            for(int j = 0;j<NO_OF_COLS;j++){
+                Square square = squares[i][j];
+                square.setUp(i,j,board[i][j]);
+            }
+        }
+    }
+
     @Override
     public void onClick(View view) {
-        //TODO
+        Square square = (Square)view;
+        Toast.makeText(this,"Click\nRow: " + square.getRow() + "\nCol: " + square.getColumn(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public boolean onLongClick(View view) {
-        //TODO
-        return false;
+        Square square = (Square)view;
+        Toast.makeText(this,"Long Press\nRow: " + square.getRow() + "\nCol: " + square.getColumn(),Toast.LENGTH_SHORT).show();
+
+        return true;
     }
 }
