@@ -84,8 +84,11 @@ public class Square extends Button {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        //super will draw the normal android button
         super.onDraw(canvas);
+        //Here we are changing the background color of the tile and text of the button
         if(revealed){
+            //If the tile is revealed then change the bg color and set value
             setBackground(ContextCompat.getDrawable(getContext(), R.drawable.revealed_background));
             if(value == MINE){
                 setText("*");
