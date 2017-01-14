@@ -1,6 +1,7 @@
 package in.codingninjas.minesweeper;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -154,6 +155,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             if (square.isMine()) {
                 Toast.makeText(this, "You Loose", Toast.LENGTH_LONG).show();
                 revealAll();
+                saveScore();
             } else {
                 score++;
                 if (square.isEmpty()) {
@@ -169,6 +171,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if(NO_0F_MINES == NO_OF_COLS*NO_OF_ROWS - score){
             Toast.makeText(this,"You win",Toast.LENGTH_LONG).show();
             revealAll();
+            saveScore();
         }
     }
 
@@ -218,5 +221,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void reset(){
         initGame();
         updateScore();
+    }
+
+    private void saveScore(){
+        SharedPreferences sharedPreferences = getSharedPreferences("minesweeper",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("score",score);
+        editor.commit();
     }
 }

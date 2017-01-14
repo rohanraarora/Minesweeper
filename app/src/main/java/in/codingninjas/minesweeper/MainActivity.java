@@ -1,10 +1,12 @@
 package in.codingninjas.minesweeper;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,7 +23,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showLastScore();
     }
 
     public void startGame(View view){
@@ -41,6 +48,14 @@ public class MainActivity extends AppCompatActivity {
         }
         intent.putExtra("difficulty",difficulty);
         startActivity(intent);
+
+    }
+
+    private void showLastScore(){
+        SharedPreferences sharedPreferences = getSharedPreferences("minesweeper",MODE_PRIVATE);
+        int score = sharedPreferences.getInt("score",0);
+        TextView scoreTextView = (TextView)findViewById(R.id.scoreTextView);
+        scoreTextView.setText("Last Score: " + score);
 
     }
 
