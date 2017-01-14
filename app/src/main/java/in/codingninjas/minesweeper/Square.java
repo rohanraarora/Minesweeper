@@ -25,6 +25,7 @@ public class Square extends Button {
 
     public Square(Context context, int size) {
         super(context);
+        //By default button has some padding, we are removing it to make our text visible in small squares
         setPadding(0,0,0,0);
         this.size = size;
     }
@@ -42,6 +43,7 @@ public class Square extends Button {
     public void reveal(){
         revealed = true;
         flagged = false;
+        //Invalidate is use to redraw the view
         invalidate();
     }
 
@@ -79,13 +81,17 @@ public class Square extends Button {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        //The actual size of the view is drawn after this method
         setMeasuredDimension(size, size);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        //super will draw the normal android button
         super.onDraw(canvas);
+        //Here we are changing the background color of the tile and text of the button
         if(revealed){
+            //If the tile is revealed then change the bg color and set value
             setBackground(ContextCompat.getDrawable(getContext(), R.drawable.revealed_background));
             if(value == MINE){
                 setText("*");
