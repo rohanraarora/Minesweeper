@@ -9,6 +9,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+//This screen is for seleting the difficulty
 public class MainActivity extends AppCompatActivity {
 
     RadioGroup radioGroup;

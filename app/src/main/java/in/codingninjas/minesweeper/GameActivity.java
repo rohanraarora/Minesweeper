@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -16,7 +18,7 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener,View.OnLongClickListener{
 
-    TableLayout tableLayout;
+    LinearLayout rootLayout;
 
     private static int NO_OF_ROWS;
     private static int NO_OF_COLS;
@@ -52,16 +54,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             case MainActivity.MEDIUM:
                 NO_OF_COLS = 8;
                 NO_OF_ROWS = 10;
-                NO_0F_MINES = 25;
+                NO_0F_MINES = 15;
                 break;
             case MainActivity.HARD:
                 NO_OF_COLS = 12;
                 NO_OF_ROWS = 15;
-                NO_0F_MINES = 60;
+                NO_0F_MINES = 45;
                 break;
         }
 
-        tableLayout = (TableLayout) findViewById(R.id.table);
+        rootLayout = (LinearLayout) findViewById(R.id.rootLayout);
         scoreTextView = (TextView)findViewById(R.id.scoreTextView);
 
         final Button reset = (Button)findViewById(R.id.resetButton);
@@ -85,17 +87,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         board = new int[NO_OF_ROWS][NO_OF_COLS];
         for(int i = 0;i<NO_OF_ROWS;i++){
             //Create a new table row
-            TableRow row = new TableRow(GameActivity.this);
+            LinearLayout row = new LinearLayout(GameActivity.this);
+            row.setOrientation(LinearLayout.HORIZONTAL);
             for(int j = 0;j<NO_OF_COLS;j++){
                 //Add squares in table row
-                Square square = new Square(GameActivity.this,size);
+                Square square = new Square(GameActivity.this);
                 squares[i][j] = square;
+                LinearLayout.LayoutParams squareParams = new LinearLayout.LayoutParams(size, size);
+                square.setLayoutParams(squareParams);
+
                 //Add Listeners
                 square.setOnClickListener(GameActivity.this);
                 square.setOnLongClickListener(GameActivity.this);
                 row.addView(square);
             }
-            tableLayout.addView(row);
+            rootLayout.addView(row);
         }
     }
 
@@ -111,20 +117,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         refreshBoard();
     }
 
+    //Set a specific no of mines
     private void setRandomMines(){
-        //Set a specific no of mines
         int minesCount = 0;
         Random random = new Random();
         while (minesCount < NO_0F_MINES){
+            //random int
             int randomInt = random.nextInt(NO_OF_ROWS*NO_OF_COLS);
             int row = randomInt/NO_OF_COLS;
             int col = randomInt%NO_OF_COLS;
             if(board[row][col] != -1){
                 board[row][col] = -1;
-                //When setting a new mine increase the value of neighbour tiles by 1.
+                //When setting a new mine increase the value of neighbour
+                //non mine tiles by 1.
 
                 increaseNeighbourValues(row,col);
-
                 minesCount++;
             }
         }
@@ -135,8 +142,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             int[] neighbourCoords = NEIGHBOUR_COORDS[i];
             int neighbourRow = row + neighbourCoords[0];
             int neighbourCol = col + neighbourCoords[1];
-            //Increase the value if neighbour sqaure is inside board and is not a mine
-            if(isInBounds(neighbourRow,neighbourCol) && board[neighbourRow][neighbourCol] != -1){
+            //Increase the value if neighbour square is inside board and is not a mine
+            if(isInBounds(neighbourRow,neighbourCol) && board[neighbourRow][neighbourCol] != Square.MINE){
                 board[neighbourRow][neighbourCol]++;
             }
         }
@@ -212,10 +219,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         revealNeighbours(neighbourSquare);
                     }
                 }
-                board[neighbourRow][neighbourCol]++;
             }
         }
     }
+
 
     private void revealAll(){
         for(int i = 0;i<NO_OF_ROWS;i++){
@@ -242,6 +249,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         updateScore();
     }
 
+
+    //Saving the score
     private void saveScore(){
         SharedPreferences sharedPreferences = getSharedPreferences("minesweeper",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
